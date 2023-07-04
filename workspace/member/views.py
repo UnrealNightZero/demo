@@ -40,6 +40,7 @@ def change(request):
 def login(request):
 
     if request.user.is_authenticated:
+        print("test")
         return redirect("/")
 
     if request.method == "GET":
