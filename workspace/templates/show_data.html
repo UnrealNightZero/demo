@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    {% csrf_token %}
+    <script>
+        $(document).ready(function() {
+            // 按钮一的点击事件处理程序
+            $('#search-button').click(function() {
+                var searchTerm = $('#search-term').val();  // 获取搜索词
+
+                // 向后端发送查询请求
+                $.ajax({
+                    url: '/search/',  // 后端处理查询的URL
+                    method: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        search_term: searchTerm},  // 发送搜索词到后端
+                    success: function(response) {
+                        // 清空之前的查询结果
+                        $('#results').empty();
+
+                        // 动态生成查询结果到页面
+                        for (var i = 0; i < response.length; i++) {
+                            $('#results').append('<p>' + response[i].name + '</p>');
+                        }
+                    }
+                });
+            });
+
+            // 按钮二和按钮三的点击事件处理程序
+            $('#button2').click(function() {
+                var searchTerm = $('#search-term').val();
+                $.ajax({
+                    url: '/search_2/',  // 后端处理查询的URL
+                    method: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        search_term: searchTerm},  // 发送搜索词到后端
+                    success: function(response) {
+                        // 清空之前的查询结果
+                        $('#results').empty();
+
+                        // 动态生成查询结果到页面
+                        for (var i = 0; i < response.length; i++) {
+                            $('#results').append('<p>' + response[i].name + '</p>');
+                        }
+                    }
+                });
+            });
+
+            $('#button3').click(function() {
+                var searchTerm = $('#search-term').val();
+                $.ajax({
+                    url: '/search_3/',  // 后端处理查询的URL
+                    method: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        search_term: searchTerm},  // 发送搜索词到后端
+                    success: function(response) {
+                        // 清空之前的查询结果
+                        $('#results').empty();
+
+                        // 动态生成查询结果到页面
+                        for (var i = 0; i < response.length; i++) {
+                            $('#results').append('<p>' + response[i].name + '</p>');
+                        }
+                    }
+                });
+            });
+
+
+        });
+    </script>
+</head>
+<body>
+    <h1>Search Page</h1>
+
+    <label for="search-term">Search:</label>
+    <input type="text" id="search-term">
+
+    <br><br>
+
+    <button id="search-button">ORM式查詢</button>
+    <button id="button2">緩存查詢</button>
+    <button id="button3">查詢任務拆分成多個子任務</button>
+
+    <div id="results"></div>
+</body>
+</html>

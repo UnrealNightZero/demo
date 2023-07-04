@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手語</title>
+</head>
+<body>
+    {% if request.user.is_authenticated %}
+    <h1>登入者:{{request.user}}</h1>
+    <button id="logout">登出</button>
+
+    {% include 'show_member.html' %}
+
+    {% endif %}
+<div>
+    <button id ="register">註冊</button>
+    <button id ="change_password">修改密碼</button>
+    <button id ="login">登入</button>
+    <button id ="message">留言板</button>
+    <button id ="showVideo">開啟攝影機</button>
+    <button id ="take_picture">照相</button>
+    <button id ="exp">實驗</button>
+    <script src="{% static 'js/index.js' %}"></script>
+</div>
+
+</body>
+<div class="footer">
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <img id="result"  src="" style="display:none;" alt="error">
+</div>
+<script src="{% static 'js/camera.js' %}"></script>
+
+</html>

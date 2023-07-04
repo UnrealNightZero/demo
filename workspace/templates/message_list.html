@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>留言板</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* CSS樣式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>留言板</h1>
+    <button onclick="back(this)" >返回</button>
+    <script>
+        function back(button){
+            window.location.href="https://handsproject.eu.org";
+        }
+    </script>
+    {% if request.user.is_authenticated %}
+    <h1>登入者:{{request.user}}</h1>
+    {% endif %}
+
+    {% csrf_token %}
+    <table id="message_table">
+        <tr data-message-id="{{ message.id }}">
+            <th>使用者名稱</th>
+            <th>留言文字</th>
+            <th>修改時間</th>
+            <th style="text-align: center;">選項</th>
+        </tr>
+        {% for message in messages %}
+        <tr data-message-id="{{ message.id }}">
+            <td>{{ message.author }}</td>
+            {% if message.editable %}
+                <td>
+                    <input type="text" value="{{ message.content }}">
+                    <button onclick="confirmEdit(this)">確認</button>
+                    <button onclick="cancelEdit(this)">取消</button>
+                </td>
+            {% else %}
+                <td>{{ message.content }}</td>
+            {% endif %}
+            <td>{{ message.created_at }}</td>
+            {% if message.author == user.username and message.change != 0 %}
+                <td class="center">
+                    <button onclick="enableEdit(this)">修改</button>
+                    <button onclick="deleteMessage(this)">收回</button>
+                </td>
+            {% else %}
+                <td></td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% csrf_token %}
+    <script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+    var table = document.getElementById("message_table");
+    var rows = table.getElementsByTagName("tr");
+    var cells = rows[1].getElementsByTagName("td");
+    });
+
+    function enableEdit(button) {
+        var row = button.parentNode.parentNode;
+        var contentCell = row.cells[1];
+        var content = contentCell.innerHTML.trim();
+        contentCell.innerHTML = '<input type="text" value="' + content + '">';
+        row.cells[3].innerHTML = '<button onclick="confirmEdit(this)">確認</button>' +
+                                  '<button onclick="cancelEdit(this)">取消</button>';
+    }
+
+    function confirmEdit(button) {
+    var row = button.parentNode.parentNode;
+    var contentCell = row.cells[1];
+    var newContent = contentCell.querySelector('input').value;
+    var message_id = row.getAttribute('data-message-id');  // 獲取留言的 ID
+    contentCell.innerHTML = newContent;
+
+    $.ajax({
+        url: '/update_message/',
+        type: 'POST',
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            message_id: message_id,
+            new_content: newContent
+        }
+    });
+
+    row.cells[3].innerHTML = '<button onclick="enableEdit(this)">修改</button>' +
+                             '<button onclick="deleteMessage(this)">收回</button>';
+}
+
+    function cancelEdit(button) {
+        var row = button.parentNode.parentNode;
+        var contentCell = row.cells[1];
+        var originalContent = contentCell.querySelector('input').getAttribute('value');
+        contentCell.innerHTML = originalContent;
+        row.cells[3].innerHTML = '<button onclick="enableEdit(this)">修改</button>' +
+                                 '<button onclick="deleteMessage(this)">收回</button>';
+    }
+
+    function deleteMessage(button) {
+    var row = button.parentNode.parentNode;
+    var message_id = row.getAttribute('data-message-id');
+
+    $.ajax({
+        url: '/delete_message/',
+        type: 'POST',
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            message_id: message_id
+        },
+        success: function(response) {
+            row.cells[1].innerHTML = '訊息已被 ' + response.author + ' 已收回';
+            row.cells[3].innerHTML = '';
+            },
+        error: function() {
+            alert('刪除留言失敗');
+        }
+    });
+}
+    </script>
+
+
+
+
+
+    {% if user.is_authenticated %}
+    <div>
+        <form action="/subit/" method="post">
+            {% csrf_token %}
+            <p></p>
+            <textarea name="content" rows="5" cols="230" placeholder="留言‧‧‧"></textarea>
+            <button style="float:right;"  type="submit">提交</button>
+        </form>
+
+    </div>
+    {% else %}
+        <p>請先登入或註冊才可留言：<a href="https://handsproject.eu.org/register/">註冊</a> / <a href="https://handsproject.eu.org/login/">登入</a></p>
+    {% endif %}
+</body>
+</html>

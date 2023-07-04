@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>新增商品</title>
+</head>
+<body>
+  <h1>新增商品</h1>
+
+  <form id="addProductForm">
+    <label for="name">商品名稱:</label>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="tags">標籤:</label>
+    <select id="tags" name="tags">
+      <option value="選項1">新增標籤</option>
+    </select><br><br>
+
+    <label for="upload">上傳商品圖片:</label>
+    <input type="file" id="upload" name="upload"><br><br>
+
+    <label for="description">描述:</label><br>
+    <textarea id="description" name="description" required></textarea><br><br>
+
+    <input type="submit" value="新增商品">
+  </form>
+
+  <script>
+    document.getElementById("addProductForm").addEventListener("submit", function(event) {
+      event.preventDefault(); // 防止表單提交
+
+      // 獲取表單數據
+      var name = document.getElementById("name").value;
+      var tags = document.getElementById("tags").value;
+      var description = document.getElementById("description").value;
+
+      // 執行後端請求或資料庫操作
+      // 這裡可以使用JavaScript的Ajax請求或其他方式將數據傳送到後端處理
+
+      // 清空表單
+      document.getElementById("addProductForm").reset();
+    });
+  </script>
+</body>
+</html>

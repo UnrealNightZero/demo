@@ -1,0 +1,17 @@
+<h1 style="display: {{ display }};">會員資料</h1>
+    <table border="1" style="display: {{ display }};">
+        <thead>
+            <tr>
+                <th>name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in data_list %}
+            <tr>
+                <td>{{ data.username }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+<button id="del" style="display: {{ display }};">刪除所有資料</button>
+<button id ="created">新增商品</button>
